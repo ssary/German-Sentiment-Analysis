@@ -3,6 +3,35 @@ from datetime import datetime
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 
+class SentimentModel:
+    def __init__(self, model_path):
+        """
+        Initialize the sentiment model with the specified model path.
+
+        Args:
+        - model_path (str): The file path or model identifier for loading the model and tokenizer.
+        """
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+    def predict_sentiment(self, text):
+        """
+        Predict the sentiment of the given text.
+
+        Args:
+        - text (str): The input text for sentiment prediction.
+
+        Returns:
+        - str: The predicted sentiment label ('negative', 'neutral', 'positive').
+        """
+        inputs = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
+        with torch.no_grad():  # Ensures that no gradient calculation is done, which saves memory and computations
+            outputs = self.model(**inputs)
+        predictions = torch.nn.functional.softmax(outputs.logits, dim=-1)
+        sentiment_classes = ['negative', 'neutral', 'positive']
+        return sentiment_classes[predictions.argmax()]
+
+
 def database_connection():
     db_config = {
     "host": "localhost",
@@ -27,6 +56,7 @@ def database_connection():
             conn.close()
 
 def process_input(text, tokenizer, model):
+    '''Tokenize the text, apply inference and return the sentiment of the text'''
     inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
     outputs = model(**inputs)
     predictions = torch.nn.functional.softmax(outputs.logits, dim=-1)
@@ -35,23 +65,26 @@ def process_input(text, tokenizer, model):
     return sentiment
 
 def insert_review(conn, cursor, review, timestamp):
+    '''Insert review text+timestamp into review table, returns id of the added review'''
     insertion_query = 'INSERT INTO review(review, timestamp) VALUES(%s, %s) RETURNING review_id'
     cursor.execute(insertion_query, (review, timestamp))
     conn.commit()
     return cursor.fetchone()[0]
 
 def insert_sentiment_prediction(conn, cursor, review_id, sentiment):
+    '''Insert the predicted sentiment of the text into predicted_review_sentiment'''
     query = 'INSERT INTO predicted_review_sentiment(review_id, sentiment) VALUES(%s, %s)'
     cursor.execute(query, (review_id, sentiment))
     conn.commit()
 
 def insert_actual_sentiment_prediction(conn, cursor, review_id, sentiment):
+    '''Insert the ground truth sentiment into actual_review_sentiment'''
     query = 'INSERT INTO actual_review_sentiment(review_id, sentiment) VALUES(%s, %s)'
     cursor.execute(query, (review_id, sentiment))
     conn.commit()
 
 def view_table(cursor, table_name, id_name):
-    # print the last 3 rows in the table
+    '''Show the last 3 rows in the table'''
     query = f'SELECT * from {table_name} ORDER BY {id_name} DESC LIMIT 3'
     cursor.execute(query)
     row = cursor.fetchone()
