@@ -6,6 +6,23 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
+import os
+from dotenv import load_dotenv
+import requests
+
+
+def load_settings():
+    # Load the environment variables from the .env file
+    load_dotenv('settings.env')
+
+    # Reading the settings including the password
+    settings = {
+        "database_url": os.getenv("DATABASE_URL"),
+        "api_key": os.getenv("API_KEY"),
+        "model_path": os.getenv("MODEL_PATH")
+    }
+
+    return settings
 
 Base = declarative_base()
 
@@ -159,20 +176,16 @@ class SentimentModel:
         sentiment_classes = ['negative', 'neutral', 'positive']
         return sentiment_classes[predictions.argmax()]
 
-model_path = 'E:\\HTW\\papers\\Sentiment analysis\\XLM-RoBERTa model'  # or use a model identifier
+
+settings = load_settings()
+print(settings)
+model_path = settings['model_path']
+# uncomment to use model identifier that downloads the model and use it (if not downloaded on your machine or path is invalid)
+# model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
 sentiment_model = SentimentModel(model_path)
 
-db_url = "postgresql://postgres:startengine1@localhost:5432/german_sentiment"
+db_url = settings['database_url']
 db_manager = DatabaseManager(db_url)
-
-'''
-Doing it from the cloud instead of file
-
-model_name = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-'''
 
 print("Enter the reviews, one review on each line, enter empty line to get the sentiments and exit")
 while True:
