@@ -1,20 +1,16 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoModel, AutoConfig
 import torch
-
 class SentimentModel:
-    def __init__(self, model_path):
+    def __init__(self, model_path, tokenizer_path):
         """
         Initialize the sentiment model with the specified model path.
 
         Args:
         - model_path (str): The file path or model identifier for loading the model and tokenizer.
         """
-        #model_path = r'C:\Users\saryn\Downloads\Shared folder\fine tune xlmroberta SA\Results HPC 100K\results\best_model'
-        #self.model = AutoModelForSequenceClassification.from_pretrained(model_path, from_tf=True)
-        #self.tokenizer = AutoTokenizer.from_pretrained(model_path, from_tf=True)
         self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+        
     def predict_sentiment(self, text):
         """
         Predict the sentiment of the given text.
