@@ -1,4 +1,4 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoModel, AutoConfig
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 class SentimentModel:
     def __init__(self, model_path, tokenizer_path):
@@ -10,7 +10,7 @@ class SentimentModel:
         """
         self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-        
+
     def predict_sentiment(self, text):
         """
         Predict the sentiment of the given text.

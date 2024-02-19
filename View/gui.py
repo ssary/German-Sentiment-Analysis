@@ -2,6 +2,7 @@ from pathlib import Path
 from tkinter import Tk, END, Canvas, Entry, Text, Button, PhotoImage, StringVar
 import sys
 
+
 parent_dir = str(Path(__file__).resolve().parent.parent)
 sys.path.append(parent_dir)
 OUTPUT_PATH = Path(__file__).parent
@@ -15,6 +16,13 @@ def relative_to_assets(path: str) -> Path:
 window = Tk()
 window.geometry("700x550")
 window.configure(bg = "#D9D9D9")
+
+def main_loop():
+    window.mainloop()
+def on_closing():
+    window.destroy()
+
+window.protocol("WM_DELETE_WINDOW", on_closing)
 
 sentiment_text_area = StringVar("")
 review_sentiment = StringVar(value="Sentiment")
@@ -67,9 +75,6 @@ entry_1.place(
     height=178.0
 )
 
-def get_entry_data():
-    return entry_1.get("1.0", END)
-
 canvas.create_text(
     24.0,
     89.0,
@@ -101,9 +106,12 @@ button_image_1 = PhotoImage(
 
 def take_input():
     from controller import handle_on_click
-    new_sentiment = handle_on_click(entry_1.get("1.0", END))
-    review_sentiment.set(value=new_sentiment)
-    canvas.itemconfig(sentiment_text_label, text=review_sentiment.get())
+    try:
+        new_sentiment = handle_on_click(entry_1.get("1.0", END))
+        review_sentiment.set(value=new_sentiment)
+        canvas.itemconfig(sentiment_text_label, text=review_sentiment.get())
+    except Exception as e:
+        print(e)
 
 button_1 = Button(
     image=button_image_1,
@@ -128,5 +136,5 @@ sentiment_text_label = canvas.create_text(
     font=("Itim Regular", 31 * -1)
 )
 window.resizable(False, False)
-def main_loop():
-    window.mainloop()
+
+from controller import handle_on_click
