@@ -4,4 +4,5 @@
 4. Create virtual environment with python -m venv myenv.
 5. source myenv/bin/activate or source myenv/Scripts/activate
 6. pip install -r requirements.txt
-7. python controller.py
+7. change the Database URL in the settings.env
+8. python controller.py
