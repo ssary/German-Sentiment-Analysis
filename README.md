@@ -10,7 +10,9 @@ Refer to the [paper](https://drive.google.com/file/d/1xg7zbCPTS3lyKhQlA2S4b9UOYe
 
 - Sentiment analysis across 8 languages, specializing in German with 87% F1 score.
 - Utilizes the robust XLM-RoBERTa architecture and fine tuned with German dataset contains many domains, the dataset is subset of [German Bert's Dataset](https://github.com/oliverguhr/german-sentiment).
-- Simple and intuitive user interface for ease of use.
+- The Model-View-Controller (MVC) design pattern has been implemented to separate thefront-end and back-end code into different components, this separation facilitates more manageable changes and updates to each side, reducing the risk of interference between the two components.
+
+- For the database, I'm using PostgreSQL and implementing Object-Relational Mapping (ORM) which adds a layer of abstraction over the database operations, allowing to work with the data and tables as objects rather than SQL queries, this is implemented using SQLAlchemy in Python, also it contains some useful abstract database operations creating a set of classes that encapsulate all database-related interactions, this abstraction allows for more manageable, modular, and maintainable code.
 
 ## Installation
 1. Clone the repository:
@@ -60,6 +62,11 @@ Add review text with any of these 8 language (German, Arabic, English, French, H
 - [Testing our 200K model](https://github.com/ssary/German-Sentiment-Analysis/blob/main/scripts/test-200k-model-on-various-datasets.ipynb)
 - [Testing Before Fine Tuning on German Bert Dataset](https://github.com/ssary/German-Sentiment-Analysis/blob/main/scripts/test-xlm-t-on-germanbert-data.ipynb)
 - [Changing German Bert dataset structure to fit for the training](https://github.com/ssary/German-Sentiment-Analysis/blob/main/scripts/change-germeval-structure.ipynb)
+
+## Results
+Here is comparison between the model before fine tuning and after fine tuning, the F1 accuracy increased by 10%, achieving 87% accuracy on German Bert Dataset.
+
+![F1 accuracy between the 4 models](https://i.ibb.co/DRRtxzN/f1-base-finetuned.png)
 ## Dataset Acknowledgment
 
 We extend our heartfelt gratitude to Oliver Guhr for developing the German-language dataset utilized in training our model. This dataset, available on GitHub, has been instrumental in enhancing our model's performance. For more details on the dataset [this GitHub repository](https://github.com/oliverguhr/german-sentiment)
